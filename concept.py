@@ -8,21 +8,19 @@ class TwiceType(int):
         return i * 2
 
 
-# Not the most pythonic way to decorate a function, but it's the best way I could come up with
-# for a fluent API type scenario
-#  Any suggestions are very welcome!
-@ShellArgument() \
-.option("-f", name="file_name", value_type=str, description="File name", required=True) \
-.option("-t", name="twice", value_type=TwiceType, description="Twice", required=True) \
-.switch("--hash", name="hash_value", value_type=str, description="Hash value", required=False) \
-.flag("-v", name="verbosity_level", description="Verbosity level", required=False) \
-.parse()  # I'd like to get rid of this parse() too, as it's currently just a way to tell the interpreter "we're finished configuring"
+# Not the most pythonic way to decorate a function, but it's the closest I could get to a fluent API
+# Any suggestions are very welcome!
+@ShellArgument()
+@ShellArgument.option("-f", name="file_name", value_type=str, description="File name", required=True)
+@ShellArgument.option("-t", name="twice", value_type=TwiceType, description="Twice", required=True)
+@ShellArgument.switch("--hash", name="hash_value", value_type=str, description="Hash value", required=False)
+@ShellArgument.flag("-v", name="verbosity_level", description="Verbosity level", required=False)
 def example(file_name: str, twice: TwiceType, hash_value: str, verbosity_level: int):
-    print(file_name)
-    print(twice)
-    print(hash_value)
-    print(verbosity_level)
+    print("file name:", file_name)
+    print("twice:", twice)
+    print("hash value:", hash_value)
+    print("verbosity_level", verbosity_level)
 
 
-#
-ShellArgument.parse_command_line()
+# This has to be called from the program itself... possible to remove?
+ShellArgument.fire()

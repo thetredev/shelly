@@ -22,8 +22,23 @@ class ShellArgument(object):
         self.switches: Iterable[ShellArgumentSwitch] = dict()
         self.flags: Iterable[ShellArgumentFlag] = dict()
 
+        self.instances.append(self)
+
     def __call__(self, callback):
-        self.callback = callback
+        if callback is not None:
+            self.callback = callback
+
+    def parse(self):
+        self.parse_arguments(self.options.values())
+        self.parse_arguments(self.switches.values())
+        self.parse_arguments(self.flags.values())
+
+        if not self.options and not self.switches and not self.flags:
+            self.instances.remove(self)
+
+    @staticmethod
+    def last_instance():
+        return ShellArgument.instances[-1]
 
     @staticmethod
     def _find_key_index(key):
@@ -33,12 +48,13 @@ class ShellArgument(object):
 
         raise ValueError()
 
-    def _parse_instance(self, instance_type: Type, key, **kwargs: dict):
+    @staticmethod
+    def _parse_value(instance_type: Type, key: str, **kwargs: dict):
         parsed_instance = None
         required = kwargs.get("required", False)
 
         try:
-            key_index = self._find_key_index(key)
+            key_index = ShellArgument._find_key_index(key)
             parsed_instance = instance_type(key, key_index, **kwargs)
         except ValueError:
             if required:
@@ -48,44 +64,42 @@ class ShellArgument(object):
 
         return parsed_instance
 
-    def _parse_value(self, instance_container: dict, instance_type: Type, key: str, **kwargs: dict):
-        parsed_instance = self._parse_instance(instance_type, key, **kwargs)
+    @staticmethod
+    def parse_value(instance_container: str, instance_type: Type, key: str, **kwargs: dict):
+        parsed_instance = ShellArgument._parse_value(instance_type, key, **kwargs)
+        last_instance = ShellArgument.last_instance()
 
         if parsed_instance is not None:
-            instance_container[key] = parsed_instance
+            getattr(last_instance, instance_container)[key] = parsed_instance
 
-        return self
-
-    def option(self, key: str, **kwargs: dict):
-        return self._parse_value(self.options, ShellArgumentOption, key, **kwargs)
-
-    def switch(self, key: str, **kwargs: dict):
-        return self._parse_value(self.switches, ShellArgumentSwitch, key, **kwargs)
-
-    def flag(self, key: str, **kwargs: dict):
-        return self._parse_value(self.flags, ShellArgumentFlag, key, **kwargs)
-
-    def parse(self):
-        self.parse_arguments(self.options.values())
-        self.parse_arguments(self.switches.values())
-        self.parse_arguments(self.flags.values())
-
-        if self.options or self.switches or self.flags:
-            self.instances.append(self)
-
-        return self
+        return last_instance
 
     @staticmethod
-    def parse_command_line():
+    def option(key: str, **kwargs: dict):
+        return ShellArgument.parse_value("options", ShellArgumentOption, key, **kwargs)
+
+    @staticmethod
+    def switch(key: str, **kwargs: dict):
+        return ShellArgument.parse_value("switches", ShellArgumentSwitch, key, **kwargs)
+
+    @staticmethod
+    def flag(key: str, **kwargs: dict):
+        return ShellArgument.parse_value("flags", ShellArgumentFlag, key, **kwargs)
+
+    @staticmethod
+    def fire():
         for instance in ShellArgument.instances:
-            instance.callback(**{
-                    option.name: option.value for option in instance.options.values()
-                } | {
-                    switch.name: switch.value for switch in instance.switches.values()
-                } | {
-                    flag.name: flag.value for flag in instance.flags.values()
-                }
-            )
+            instance.parse()
+
+            kwargs = {
+                option.name: option.value for option in instance.options.values()
+            } | {
+                switch.name: switch.value for switch in instance.switches.values()
+            } | {
+                flag.name: flag.value for flag in instance.flags.values()
+            }
+
+            instance.callback(**kwargs)
 
     @staticmethod
     def parse_arguments(instance: Iterable[ShellArgumentBase]):
