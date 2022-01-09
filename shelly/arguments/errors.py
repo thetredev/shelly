@@ -1,0 +1,2 @@
+class ShellArgumentError(Exception):
+    pass
