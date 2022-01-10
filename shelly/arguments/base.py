@@ -10,7 +10,7 @@ from shelly.arguments.values import ShellArgumentValueWrapper
 @dataclass(frozen=True, eq=True)
 class ShellArgumentBase(object):
     key: str
-    key_index: int
+    key_indices: list[int]
 
     name: str = field(default="")
     description: str = field(default="")
@@ -33,3 +33,7 @@ class ShellArgumentBase(object):
     @property
     def value(self) -> Any:
         return self._value.data
+
+    @property
+    def key_index(self) -> int:
+        return next(iter(self.key_indices))

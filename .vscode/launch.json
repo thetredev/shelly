@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "args": ["-f", "hello", "--hash=watat", "-v", "-t", "5"],
+            "args": ["-f", "hello", "--hash=watat", "-v", "-t", "5", "-z", "20"],
         }
     ]
 }
