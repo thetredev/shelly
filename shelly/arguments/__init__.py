@@ -95,7 +95,7 @@ class ShellArgument(object):
     @staticmethod
     def _format_callback_kwargs_for(instance_container: Iterable[ShellArgumentBase]):
         return {
-            arg.name: arg.value for arg in instance_container
+            arg.name: arg for arg in instance_container
         }
 
     def fire(self):
