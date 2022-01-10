@@ -61,8 +61,6 @@ class ShellArgument(object):
         except ValueError:
             if required:
                 raise ShellArgumentError(f"Could not parse required command line option '{key}'")
-        except ShellArgumentError as error:
-            raise error
 
         return parsed_instance
 
