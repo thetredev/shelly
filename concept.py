@@ -23,4 +23,4 @@ def example(file_name: str, twice: TwiceType, hash_value: str, verbosity_level: 
 
 
 # This has to be called from the program itself... possible to remove?
-ShellArgument.fire()
+ShellArgument.fire_all()
