@@ -1,5 +1,5 @@
 from shelly.arguments.cli import command_line
-from shelly.arguments import ShellArgumentBase
+from shelly.arguments.base import ShellArgumentBase
 
 
 class ShellArgumentFlag(ShellArgumentBase):

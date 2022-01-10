@@ -1,8 +1,5 @@
 from collections.abc import ValuesView
-from typing import Iterable
-from typing import Type
 
-from shelly.arguments.base import ShellArgumentBase
 from shelly.arguments.cli import command_line
 from shelly.arguments.errors import ShellArgumentError
 
@@ -19,9 +16,9 @@ class ShellArgument(object):
 
         self.callback = None
 
-        self.flags: dict[ShellArgumentFlag] = dict()
-        self.options: dict[ShellArgumentOption] = dict()
-        self.switches: dict[ShellArgumentSwitch] = dict()
+        self.flags: dict[str, ShellArgumentFlag] = dict()
+        self.options: dict[str, ShellArgumentOption] = dict()
+        self.switches: dict[str, ShellArgumentSwitch] = dict()
 
         self.instances.append(self)
 
@@ -30,8 +27,8 @@ class ShellArgument(object):
             self.callback = callback
 
     @staticmethod
-    def _parse(instance: ValuesView[ShellArgumentBase]):
-        for argument in instance:
+    def _parse(instance_container: ValuesView[ShellArgumentFlag | ShellArgumentOption | ShellArgumentSwitch]):
+        for argument in instance_container:
             argument.parse()
 
     def parse(self):
@@ -43,7 +40,7 @@ class ShellArgument(object):
             self.instances.remove(self)
 
     @staticmethod
-    def _find_key_index(key) -> int:
+    def _find_key_index(key: str) -> int:
         for i, arg in enumerate(command_line):
             if key in arg:
                 return i
@@ -51,7 +48,7 @@ class ShellArgument(object):
         raise ValueError()
 
     @staticmethod
-    def _parse_value(instance_type: Type, key: str, **kwargs: dict):
+    def _parse_value(instance_type: ShellArgumentFlag | ShellArgumentOption | ShellArgumentSwitch, key: str, **kwargs: dict):
         parsed_instance = None
         required = kwargs.get("required", False)
 
@@ -69,7 +66,7 @@ class ShellArgument(object):
         return ShellArgument.instances[-1]
 
     @staticmethod
-    def parse_value(instance_container: str, instance_type: Type, key: str, **kwargs: dict):
+    def parse_value(instance_container: str, instance_type: ShellArgumentFlag | ShellArgumentOption | ShellArgumentSwitch, key: str, **kwargs: dict):
         parsed_instance = ShellArgument._parse_value(instance_type, key, **kwargs)
         last_instance = ShellArgument._last_instance()
 
@@ -91,9 +88,9 @@ class ShellArgument(object):
         return ShellArgument.parse_value("switches", ShellArgumentSwitch, key, **kwargs)
 
     @staticmethod
-    def _format_callback_kwargs_for(instance_container: Iterable[ShellArgumentBase]):
+    def _format_callback_kwargs_for(instance_container: ValuesView[ShellArgumentFlag | ShellArgumentOption | ShellArgumentSwitch]):
         return {
-            arg.name: arg for arg in instance_container
+            argument.name: argument for argument in instance_container
         }
 
     def fire(self):
