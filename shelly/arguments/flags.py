@@ -19,8 +19,7 @@ class ShellArgumentFlag(ShellArgumentBase):
         args = [arg for arg in command_line if self._is_flag(arg)]
 
         self._value.data = sum([
-            arg.count(self.__identifier)
-            for arg in args
+            arg.count(self.__identifier) for arg in args
             if all(identifier == self.__identifier for identifier in arg[1:])
         ])
 
