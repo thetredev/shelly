@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import importlib
 from collections.abc import ValuesView
+from pathlib import Path
 from typing import Any, Callable, Protocol, Type
 
 from shelly.cli import command_line
-from shelly.errors import ShellArgumentError
+from shelly.errors import ShellArgumentError, ShellDecoratorPluginError
 from shelly.arguments.chains import ShellArgumentChain
 from shelly.arguments.flags import ShellArgumentFlag
 from shelly.arguments.options import ShellArgumentOption
@@ -19,6 +21,20 @@ class ShellArgumentType(Protocol):
 class ShellArgument(Protocol):
     @property
     def name(self) -> str:
+        ...
+
+
+class ShellDecoratorPlugin(Protocol):
+    @property
+    def SHELLY_PLUGIN_TYPE(self) -> Type:
+        ...
+
+    @property
+    def SHELLY_PLUGIN_TYPE_NAME(self) -> str:
+        ...
+
+    @property
+    def SHELLY_PLUGIN_NAME(self) -> str:
         ...
 
 
@@ -61,6 +77,12 @@ class ShellDecorator:
 
         # We should probably call super() on this method, too, but I'm not too sure of that at the moment.
 
+    def _get_parser_instances(self) -> dict:
+        """Yield available parser instances."""
+        for slot in self.__slots__:
+            if slot != "_callback":
+                yield getattr(self, slot)
+
     @staticmethod
     def _parse_instance(instance_container: ValuesView[ShellArgumentType]) -> None:
         """Parse each command line argument in the instance container."""
@@ -69,14 +91,16 @@ class ShellDecorator:
 
     def _parse_all_instances(self) -> None:
         """Parse all command line argument types."""
-        self._parse_instance(self._chains.values())
-        self._parse_instance(self._flags.values())
-        self._parse_instance(self._options.values())
-        self._parse_instance(self._switches.values())
+        parsers = list(self._get_parser_instances())
+
+        for parser in parsers:
+            self._parse_instance(parser.values())
 
         # Render this instance useless and remove it from the instance list
         # if we couldn't find any command line argument relevant for this decorator.
-        if not self._flags and not self._options and not self._switches and not self._chains:
+        remove_instance = all(not parser for parser in parsers)
+
+        if remove_instance:
             self._instances.remove(self)
 
     @staticmethod
@@ -152,11 +176,10 @@ class ShellDecorator:
     def _fire(self) -> None:
         """Parse the command line arguments and call the callback with the parsed values."""
         self._parse_all_instances()
+        kwargs = dict()
 
-        kwargs = self._format_callback_kwargs_for(self._chains.values()) \
-            | self._format_callback_kwargs_for(self._flags.values()) \
-            | self._format_callback_kwargs_for(self._options.values()) \
-            | self._format_callback_kwargs_for(self._switches.values())
+        for parser in self._get_parser_instances():
+            kwargs.update(self._format_callback_kwargs_for(parser.values()))
 
         self._callback(**kwargs)
 
@@ -166,6 +189,51 @@ class ShellDecorator:
         for instance in ShellDecorator._instances:
             instance._fire()
 
+    @staticmethod
+    def plug(plugin: ShellDecoratorPlugin):
+        """Dynamically extend this class with a decorator plugin."""
+        # Get the decorator plugin name
+        instance_name = plugin.SHELLY_PLUGIN_NAME
+
+        # Throw an error if the instance name starts with an underscore (_)
+        if instance_name.startswith("_"):
+            raise ShellDecoratorPluginError("Plugin instance name must not start with an underscore (_)!")
+
+        # Prepend the decorator plugin instance name with an underscore (_)
+        instance_name = f"_{instance_name}"
+
+        # Add the instance name to the class's __slots__ attribute
+        setattr(ShellDecorator, "__slots__", (*ShellDecorator.__slots__, instance_name))
+
+        # Add the plugin type to the class
+        setattr(ShellDecorator, plugin.SHELLY_PLUGIN_TYPE_NAME, plugin.SHELLY_PLUGIN_TYPE)
+
+        # Add the instance to the class (empty dict)
+        setattr(ShellDecorator, instance_name, dict())
+
+        # Add the parser method to the class using lambda magic
+        setattr(ShellDecorator, plugin.SHELLY_PLUGIN_NAME,
+            lambda key, **kwargs: ShellDecorator._parse_value(
+                instance_name, plugin.SHELLY_PLUGIN_TYPE, key, **kwargs
+            )
+        )
+
 
 # Short type alias
 shell = ShellDecorator
+
+
+# Register plugins
+def __register_plugins():
+    plugins_path = Path(__file__).parent.joinpath("plugins")
+
+    plugin_list = [
+        plugin_file.stem for plugin_file in plugins_path.iterdir()
+        if plugin_file.name != "__init__.py" and plugin_file.name.endswith(".py")
+    ]
+
+    for plugin_module in plugin_list:
+        shell.plug(importlib.import_module(f"shelly.plugins.{plugin_module}"))
+
+
+__register_plugins()

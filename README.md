@@ -47,11 +47,56 @@ Currently there's no PyPI package available for Shelly, but there will be at som
 
 ## How to extend the library
 
-Shelly doesn't implement the default Python plugin architecutre, but it does provide the base dataclass `shelly.arguments.base.ShellArgumentBase` which in theory could be inherited from to provide a specialized parser. However, it's very cumbersome at the moment to connect all dependencies afterwards. There's basically no clean way to do this. I'll see what I can do.
+Shelly implements a plugin interface which you can use to extend the `shelly.decorator.ShellDecorator` class dynamically.
+
+The following example demonstrates that using a `ListArgument` class which parses arguments of the format `"a,b,c,d"`, giving the result `["a", "b", "c", "d"]`:
+```python
+# shelly/plugins/list.py
+
+from dataclasses import dataclass
+from typing import Type
+
+from shelly.cli import command_line
+from shelly.arguments.base import ShellArgumentBase
+
+
+@dataclass(frozen=True, eq=True, slots=True)
+class ListArgument(ShellArgumentBase):
+    delimiter = ","
+
+    def _parse(self) -> None:
+        self._value.data = command_line[self.value_index].split(self.delimiter)
+
+
+SHELLY_PLUGIN_TYPE: Type[ListArgument] = ListArgument
+SHELLY_PLUGIN_TYPE_NAME: str = "List"
+SHELLY_PLUGIN_NAME: str = "list"
+```
+
+That's all there is to it. Define a class, define the global variables `SHELLY_PLUGIN_TYPE`, `SHELLY_PLUGIN_TYPE_NAME` and `SHELLY_PLUGIN_NAME` and you're done.
+
+This will result in `shelly.decorator.ShellDecorator` being modified at runtime as follows:
+
+```python
+class ShellDecorator:
+    __slots__ = ("_callback", "_chains", "_flags", "_options", "_switches", "_list")
+
+    ...
+    List: Type[ListArgument] = ListArgument
+
+    def __init__(self) -> None:
+        ...
+        self._list = dict()
+
+    def list(key: str, **kwargs: dict[str, Any]) -> ShellDecorator):
+        return ShellDecorator._parse_value("_list", ListArgument, key, **kwargs)
+```
+
+See [`shelly.decorators.ShellDecorator.plug()`](shelly/decorators.py#L193) for implementation details.
 
 ## Contribute
 
-As soon as there's a clean plugin infrastructure, there will be a guide on how to contribute. Until then, just file an [issue](https://github.com/thetredev/shelly/issues).
+If you find any bugs, please, by all means hit me with a pull request! If you want to extend the library, just implement some plugins. You can hit me with a pull request and ask for the plugin being integrated into the main code.
 
 ## Known Issues
 
