@@ -27,7 +27,7 @@ class ShellArgumentDecorator:
     __slots__ = ("callback", "chains", "flags", "options", "switches")
 
     # List to reference instances of this class
-    instances: list[ShellArgumentDecorator] = list()
+    _instances: list[ShellArgumentDecorator] = list()
 
     # Short type aliases
     Chain: Type[ShellArgumentChain] = ShellArgumentChain
@@ -48,7 +48,7 @@ class ShellArgumentDecorator:
         self.switches: dict[str, ShellArgumentSwitch] = dict()
 
         # Append this instance to the instance list
-        self.instances.append(self)
+        self._instances.append(self)
 
     def __call__(self, callback: Callable[..., None]) -> None:
         """Called when the Python interpreter has scanned a function decorated with this class."""
@@ -77,7 +77,7 @@ class ShellArgumentDecorator:
         # Render this instance useless and remove it from the instance list
         # if we couldn't find any command line argument relevant for this decorator.
         if not self.flags and not self.options and not self.switches and not self.chains:
-            self.instances.remove(self)
+            self._instances.remove(self)
 
     @staticmethod
     def _find_key_indices(key: str) -> list[int]:
@@ -111,7 +111,7 @@ class ShellArgumentDecorator:
     @staticmethod
     def _last_instance() -> ShellArgumentDecorator:
         """Return the last instance of this decorator."""
-        return ShellArgumentDecorator.instances[-1]
+        return ShellArgumentDecorator._instances[-1]
 
     @staticmethod
     def _parse_value(instance_container: str, instance_type: ShellArgumentType, key: str, **kwargs: dict[str, Any]) -> ShellArgumentDecorator:
@@ -163,7 +163,7 @@ class ShellArgumentDecorator:
     @staticmethod
     def fire() -> None:
         """Call fire() on all instances of the instance list."""
-        for instance in ShellArgumentDecorator.instances:
+        for instance in ShellArgumentDecorator._instances:
             instance._fire()
 
 
