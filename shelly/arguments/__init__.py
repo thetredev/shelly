@@ -96,7 +96,7 @@ class ShellArgument:
 
     @staticmethod
     def switch(key: str, **kwargs: dict[str, Any]) -> ShellArgument:
-        return ShellArgument.parse_value("chains", ShellArgumentChain, key, **kwargs)
+        return ShellArgument.parse_value("chains", ShellArgumentSwitch, key, **kwargs)
 
     @staticmethod
     def _format_callback_kwargs_for(instance_container: ValuesView[ShellArgumentChain | ShellArgumentFlag | ShellArgumentOption | ShellArgumentSwitch]) -> dict[str, ShellArgumentChain | ShellArgumentFlag | ShellArgumentOption | ShellArgumentSwitch]:
