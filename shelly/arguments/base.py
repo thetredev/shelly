@@ -7,7 +7,7 @@ from shelly.arguments.errors import ShellArgumentError
 from shelly.arguments.values import ShellArgumentValueWrapper
 
 
-@dataclass(frozen=True, eq=True)
+@dataclass(frozen=True, eq=True, slots=True)
 class ShellArgumentBase(object):
     key: str
     key_indices: list[int]
