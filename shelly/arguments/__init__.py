@@ -9,12 +9,10 @@ from shelly.arguments.options import ShellArgumentOption
 from shelly.arguments.switches import ShellArgumentSwitch
 
 
-class ShellArgument(object):
+class ShellArgument:
     instances: list = list()
 
     def __init__(self) -> None:
-        super().__init__()
-
         self.callback = None
 
         self.chains: dict[str, ShellArgumentChain] = dict()
