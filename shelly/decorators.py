@@ -67,7 +67,7 @@ class ShellArgumentDecorator:
         for argument in instance_container:
             argument.parse()
 
-    def parse(self) -> None:
+    def _parse_all(self) -> None:
         """Parse all command line argument types."""
         self._parse(self.chains.values())
         self._parse(self.flags.values())
@@ -151,7 +151,7 @@ class ShellArgumentDecorator:
 
     def fire(self) -> None:
         """Parse the command line arguments and call the callback with the parsed values."""
-        self.parse()
+        self._parse_all()
 
         kwargs = self._format_callback_kwargs_for(self.chains.values()) \
             | self._format_callback_kwargs_for(self.flags.values()) \
