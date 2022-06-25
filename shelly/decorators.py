@@ -83,6 +83,8 @@ class ShellArgumentDecorator:
             if required:
                 raise ShellArgumentError(f"Could not parse required command line option '{key}'")
 
+            parsed_instance = instance_type(key, [], **kwargs)
+
         return parsed_instance
 
     @staticmethod
@@ -94,9 +96,7 @@ class ShellArgumentDecorator:
         parsed_instance = ShellArgumentDecorator._parse_value(instance_type, key, **kwargs)
         last_instance = ShellArgumentDecorator._last_instance()
 
-        if parsed_instance is not None:
-            getattr(last_instance, instance_container)[key] = parsed_instance
-
+        getattr(last_instance, instance_container)[key] = parsed_instance
         return last_instance
 
     @staticmethod
