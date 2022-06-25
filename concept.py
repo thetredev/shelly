@@ -1,4 +1,4 @@
-from shelly.arguments.decorators import shell
+from shelly.decorators import shell
 
 
 # Custom type to show how one could use it to directly transform a raw string from the command line
