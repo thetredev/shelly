@@ -59,7 +59,7 @@ class ShellArgumentDecorator:
         self._parse(self.options.values())
         self._parse(self.switches.values())
 
-        if not self.flags and not self.options and not self.switches:
+        if not self.flags and not self.options and not self.switches and not self.chains:
             self.instances.remove(self)
 
     @staticmethod
