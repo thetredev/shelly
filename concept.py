@@ -32,7 +32,7 @@ def example(
 
 def main():
     # This has to be called from the program itself... possible to remove?
-    shell.fire_all()
+    shell.fire()
 
 
 if __name__ == "__main__":
