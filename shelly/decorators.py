@@ -162,7 +162,7 @@ class ShellArgumentDecorator:
 
     @staticmethod
     def fire() -> None:
-        """Call fire() on all instances of the instance list."""
+        """Call _fire() on all instances of the instance list."""
         for instance in ShellArgumentDecorator._instances:
             instance._fire()
 
