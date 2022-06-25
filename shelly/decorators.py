@@ -80,7 +80,7 @@ class ShellArgumentDecorator:
             self.instances.remove(self)
 
     @staticmethod
-    def find_key_indices(key: str) -> list[int]:
+    def _find_key_indices(key: str) -> list[int]:
         """Yield key indices in the command line. Throws a `ValueError` if the key wasn't found."""
         key_indices = [i for i, arg in enumerate(command_line) if key in arg]
 
@@ -96,7 +96,7 @@ class ShellArgumentDecorator:
         required = kwargs.get("required", False)
 
         try:
-            key_indices = ShellArgumentDecorator.find_key_indices(key)
+            key_indices = ShellArgumentDecorator._find_key_indices(key)
             parsed_instance = instance_type(key, list(key_indices), **kwargs)
         except ValueError:
             if required:
