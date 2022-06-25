@@ -7,9 +7,9 @@ class ShellArgumentFlag(ShellArgumentBase):
         args = [arg for arg in command_line if self._is_flag(arg)]
 
         self._value.data = sum([
-            arg.count(self.identifier)
+            arg.count(self.__identifier)
             for arg in args
-            if all(identifier == self.identifier for identifier in arg[1:])
+            if all(identifier == self.__identifier for identifier in arg[1:])
         ])
 
     def _is_flag(self, arg: str):
@@ -19,5 +19,5 @@ class ShellArgumentFlag(ShellArgumentBase):
         return self.key == arg or arg.startswith(self.key)
 
     @property
-    def identifier(self) -> str:
+    def __identifier(self) -> str:
         return self.key[1]
