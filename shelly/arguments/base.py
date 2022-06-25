@@ -1,3 +1,5 @@
+import contextlib
+
 from dataclasses import dataclass, field
 from typing import Any, Type
 
@@ -40,11 +42,12 @@ class ShellArgumentBase:
 
     def parse(self) -> None:
         """Try to parse the value using the appropriate subclass. Throws a `ShellArgumentError` exception on failure for a required argument."""
-        try:
-            self._parse()
-        except (IndexError, ValueError):
-            if self.required:
-                raise ShellArgumentError(f"Could not parse command line argument for required option '{self.key}'")
+        with contextlib.suppress(StopIteration):
+            try:
+                self._parse()
+            except (IndexError, ValueError):
+                if self.required:
+                    raise ShellArgumentError(f"Could not parse command line argument for required option '{self.key}'")
 
     def _parse(self) -> None:
         """Overwritten by subclass to perform the actual parsing of the data."""

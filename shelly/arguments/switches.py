@@ -1,4 +1,3 @@
-import contextlib
 from dataclasses import dataclass
 
 from shelly.cli import command_line
@@ -19,6 +18,5 @@ class ShellArgumentSwitch(ShellArgumentBase):
         #  Command line: --verbosity=4
         #  Result: 4
 
-        with contextlib.suppress(StopIteration):
-            arg_value = command_line[self.key_index]
-            self._value.data = self.value_type(arg_value.split(self.delimiter)[1])
+        arg_value = command_line[self.key_index]
+        self._value.data = self.value_type(arg_value.split(self.delimiter)[1])
