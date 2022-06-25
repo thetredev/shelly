@@ -1,8 +1,7 @@
+from dataclasses import dataclass
 from typing import Any
 
 
+@dataclass(eq=True, slots=True)
 class ShellArgumentValue:
-    __slots__ = ("data",)
-
-    def __init__(self) -> None:
-        self.data: Any = None
+    data: Any = None
