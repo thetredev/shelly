@@ -90,7 +90,7 @@ class ShellArgumentDecorator:
         yield from key_indices
 
     @staticmethod
-    def _parse_value(instance_type: ShellArgumentType, key: str,  **kwargs: dict[str, Any]) -> ShellArgumentType:
+    def _parse_value_internal(instance_type: ShellArgumentType, key: str,  **kwargs: dict[str, Any]) -> ShellArgumentType:
         """Try to parse a command line argument value. Raise a `ShellArgumentError` on failure if the argument is required."""
         parsed_instance = None
         required = kwargs.get("required", False)
@@ -116,7 +116,7 @@ class ShellArgumentDecorator:
     @staticmethod
     def parse_value(instance_container: str, instance_type: ShellArgumentType, key: str, **kwargs: dict[str, Any]) -> ShellArgumentDecorator:
         """Wrapper around _parse_value() with more focus on storing the parsed instance in the appropriate command line argument type map."""
-        parsed_instance = ShellArgumentDecorator._parse_value(instance_type, key, **kwargs)
+        parsed_instance = ShellArgumentDecorator._parse_value_internal(instance_type, key, **kwargs)
         last_instance = ShellArgumentDecorator._last_instance()
 
         getattr(last_instance, instance_container)[key] = parsed_instance
