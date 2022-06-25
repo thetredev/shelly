@@ -149,7 +149,7 @@ class ShellArgumentDecorator:
             argument.name: argument for argument in instance_container
         }
 
-    def fire(self) -> None:
+    def _fire(self) -> None:
         """Parse the command line arguments and call the callback with the parsed values."""
         self._parse_all_instances()
 
@@ -164,7 +164,7 @@ class ShellArgumentDecorator:
     def fire_all() -> None:
         """Call fire() on all instances of the instance list."""
         for instance in ShellArgumentDecorator.instances:
-            instance.fire()
+            instance._fire()
 
 
 # Short type alias
