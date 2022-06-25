@@ -38,3 +38,7 @@ def example(
 
 # This has to be called from the program itself... possible to remove?
 ShellArgument.fire_all()
+
+
+# Execute as follows:
+# python concept.py -f "test.txt" -t 3 -v 5 -z 1 -z 3 -z 6 --hash=35t1251
