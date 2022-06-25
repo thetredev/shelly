@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Any, Type
 
-from shelly.arguments.errors import ShellArgumentError
+from shelly.errors import ShellArgumentError
 from shelly.arguments.values import ShellArgumentValue
 
 

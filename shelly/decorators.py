@@ -4,7 +4,7 @@ from collections.abc import ValuesView
 from typing import Any, Callable, Protocol, Type
 
 from shelly.cli import command_line
-from shelly.arguments.errors import ShellArgumentError
+from shelly.errors import ShellArgumentError
 
 from shelly.arguments.chains import ShellArgumentChain
 from shelly.arguments.flags import ShellArgumentFlag
