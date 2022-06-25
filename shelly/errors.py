@@ -1,2 +1,2 @@
-class ShellArgumentError(Exception):
+class ShellArgumentError(ValueError):
     pass
