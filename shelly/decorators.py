@@ -62,17 +62,17 @@ class ShellArgumentDecorator:
         # We should probably call super() on this method, too, but I'm not too sure of that at the moment.
 
     @staticmethod
-    def _parse(instance_container: ValuesView[ShellArgumentType]) -> None:
+    def _parse_instance(instance_container: ValuesView[ShellArgumentType]) -> None:
         """Parse each command line argument in the instance container."""
         for argument in instance_container:
             argument.parse()
 
     def _parse_all(self) -> None:
         """Parse all command line argument types."""
-        self._parse(self.chains.values())
-        self._parse(self.flags.values())
-        self._parse(self.options.values())
-        self._parse(self.switches.values())
+        self._parse_instance(self.chains.values())
+        self._parse_instance(self.flags.values())
+        self._parse_instance(self.options.values())
+        self._parse_instance(self.switches.values())
 
         # Render this instance useless and remove it from the instance list
         # if we couldn't find any command line argument relevant for this decorator.
