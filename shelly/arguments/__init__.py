@@ -10,6 +10,8 @@ from shelly.arguments.switches import ShellArgumentSwitch
 
 
 class ShellArgument:
+    __slots__ = ("callback", "chains", "flags", "options", "switches")
+
     instances: list = list()
 
     def __init__(self) -> None:
