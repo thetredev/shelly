@@ -16,5 +16,6 @@ class ShellArgumentChain(ShellArgumentBase):
 
         with contextlib.suppress(StopIteration):
             self._value.data = [
-                self.value_type(command_line[key_index + 1]) for key_index in self.key_indices
+                self.value_type(command_line[key_index + 1])
+                for key_index in self.key_indices
             ]
