@@ -5,10 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Current File",
+            "name": "Python: Concept",
             "type": "python",
             "request": "launch",
-            "program": "${file}",
+            "program": "${workspaceFolder}/concept.py",
             "console": "integratedTerminal",
             "args": ["-f", "hello", "--hash=watat", "-v", "-t", "5", "-z", "20"],
         }
