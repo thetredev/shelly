@@ -161,7 +161,7 @@ class ShellArgumentDecorator:
         self.callback(**kwargs)
 
     @staticmethod
-    def fire() -> None:
+    def parse() -> None:
         """Call _fire() on all instances of the instance list."""
         for instance in ShellArgumentDecorator._instances:
             instance._fire()
