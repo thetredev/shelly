@@ -23,12 +23,12 @@ class ShellArgumentFlag(ShellArgumentBase):
             if all(identifier == self.__identifier for identifier in argument[1:])
         ])
 
-    def _is_flag(self, arg: str):
+    def _is_flag(self, argument: str):
         """Return whether the given argument indicates a flag or not."""
-        if arg.startswith("--"):
+        if argument.startswith("--"):
             return False
 
-        return self.key == arg or arg.startswith(self.key)
+        return self.key == argument or argument.startswith(self.key)
 
     @property
     def __identifier(self) -> str:
