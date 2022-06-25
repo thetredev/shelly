@@ -29,10 +29,10 @@ class ShellArgumentDecorator:
     instances: list[ShellArgumentDecorator] = list()
 
     # Short type aliases
-    Chain: Type = ShellArgumentChain
-    Flag: Type = ShellArgumentFlag
-    Option: Type = ShellArgumentOption
-    Switch: Type = ShellArgumentSwitch
+    Chain: Type[ShellArgumentChain] = ShellArgumentChain
+    Flag: Type[ShellArgumentFlag] = ShellArgumentFlag
+    Option: Type[ShellArgumentOption] = ShellArgumentOption
+    Switch: Type[ShellArgumentSwitch] = ShellArgumentSwitch
 
     def __init__(self) -> None:
         self.callback = None
