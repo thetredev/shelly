@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from typing import Any, Type
 
 from shelly.arguments.errors import ShellArgumentError
-from shelly.arguments.values import ShellArgumentValueWrapper
+from shelly.arguments.values import ShellArgumentValue
 
 
 @dataclass(frozen=True, eq=True, slots=True)
@@ -16,7 +16,7 @@ class ShellArgumentBase(object):
     required: bool = field(default=False)
 
     value_type: Type = field(default=None)
-    _value: ShellArgumentValueWrapper = field(default_factory=ShellArgumentValueWrapper)
+    _value: ShellArgumentValue = field(default_factory=ShellArgumentValue)
 
     def parse(self):
         try:

@@ -1,7 +1,7 @@
 from typing import Any
 
 
-class ShellArgumentValueWrapper:
+class ShellArgumentValue:
     __slots__ = ("data",)
 
     def __init__(self) -> None:
