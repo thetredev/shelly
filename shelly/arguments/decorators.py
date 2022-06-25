@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import ValuesView
-from typing import Any, Callable, Protocol
+from typing import Any, Callable, Protocol, Type
 
 from shelly.arguments.cli import command_line
 from shelly.arguments.errors import ShellArgumentError
@@ -27,6 +27,12 @@ class ShellArgumentDecorator:
     __slots__ = ("callback", "chains", "flags", "options", "switches")
 
     instances: list[ShellArgumentDecorator] = list()
+
+    # Short type aliases
+    Chain: Type = ShellArgumentChain
+    Flag: Type = ShellArgumentFlag
+    Option: Type = ShellArgumentOption
+    Switch: Type = ShellArgumentSwitch
 
     def __init__(self) -> None:
         self.callback = None
@@ -129,3 +135,7 @@ class ShellArgumentDecorator:
     def fire_all() -> None:
         for instance in ShellArgumentDecorator.instances:
             instance.fire()
+
+
+# Short type alias
+shell = ShellArgumentDecorator

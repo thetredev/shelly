@@ -1,10 +1,4 @@
-from shelly.arguments.decorators import ShellArgumentDecorator
-
-from shelly.arguments.chains import ShellArgumentChain
-from shelly.arguments.flags import ShellArgumentFlag
-from shelly.arguments.options import ShellArgumentOption
-from shelly.arguments.switches import ShellArgumentSwitch
-
+from shelly.arguments.decorators import shell
 
 
 # Custom type to show how one could use it to directly transform a raw string from the command line
@@ -16,18 +10,18 @@ class DoubleInt(int):
 
 # Not the most pythonic way to decorate a function, but it's the closest I could get to a fluent API
 # Any suggestions are very welcome!
-@ShellArgumentDecorator()
-@ShellArgumentDecorator.option("-f", name="file_name", value_type=str, description="Example file name", required=True)
-@ShellArgumentDecorator.option("-t", name="double_int", value_type=DoubleInt, description="Double the integer input", required=True)
-@ShellArgumentDecorator.switch("--hash", name="hash_value", value_type=str, description="Example hash value", required=False)
-@ShellArgumentDecorator.flag("-v", name="verbosity_level", description="Verbosity level", required=False)
-@ShellArgumentDecorator.chain("-z", name="chain_example", value_type=int, description="Chain example", required=True)
+@shell()
+@shell.option("-f", name="file_name", value_type=str, description="Example file name", required=True)
+@shell.option("-t", name="double_int", value_type=DoubleInt, description="Double the integer input", required=True)
+@shell.switch("--hash", name="hash_value", value_type=str, description="Example hash value", required=False)
+@shell.flag("-v", name="verbosity_level", description="Verbosity level", required=False)
+@shell.chain("-z", name="chain_example", value_type=int, description="Chain example", required=True)
 def example(
-    file_name: ShellArgumentOption,
-    double_int: ShellArgumentOption,
-    hash_value: ShellArgumentSwitch,
-    verbosity_level: ShellArgumentFlag,
-    chain_example: ShellArgumentChain
+    file_name: shell.Option,
+    double_int: shell.Option,
+    hash_value: shell.Switch,
+    verbosity_level: shell.Flag,
+    chain_example: shell.Chain
 ):
     print(file_name.description, file_name.value)
     print(double_int.description, double_int.value)
@@ -37,7 +31,7 @@ def example(
 
 
 # This has to be called from the program itself... possible to remove?
-ShellArgumentDecorator.fire_all()
+shell.fire_all()
 
 
 # Execute as follows:
