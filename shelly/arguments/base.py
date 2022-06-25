@@ -18,14 +18,14 @@ class ShellArgumentBase:
     value_type: Type = field(default=None)
     _value: ShellArgumentValue = field(default_factory=ShellArgumentValue)
 
-    def parse(self):
+    def parse(self) -> None:
         try:
             self._parse()
         except (IndexError, ValueError):
             if self.required:
                 raise ShellArgumentError(f"Could not parse command line argument for required option '{self.key}'")
 
-    def _parse(self):
+    def _parse(self) -> None:
         raise NotImplementedError("Abstract class!!")
 
     @property
