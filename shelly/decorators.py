@@ -114,7 +114,7 @@ class ShellArgumentDecorator:
         return ShellArgumentDecorator.instances[-1]
 
     @staticmethod
-    def parse_value(instance_container: str, instance_type: ShellArgumentType, key: str, **kwargs: dict[str, Any]) -> ShellArgumentDecorator:
+    def _parse_value(instance_container: str, instance_type: ShellArgumentType, key: str, **kwargs: dict[str, Any]) -> ShellArgumentDecorator:
         """Wrapper around _parse_value() with more focus on storing the parsed instance in the appropriate command line argument type map."""
         parsed_instance = ShellArgumentDecorator._parse_value_internal(instance_type, key, **kwargs)
         last_instance = ShellArgumentDecorator._last_instance()
@@ -125,22 +125,22 @@ class ShellArgumentDecorator:
     @staticmethod
     def chain(key: str, **kwargs: dict[str, Any]) -> ShellArgumentDecorator:
         """Parse command line argument type `ShellArgumentChain`."""
-        return ShellArgumentDecorator.parse_value("chains", ShellArgumentChain, key, **kwargs)
+        return ShellArgumentDecorator._parse_value("chains", ShellArgumentChain, key, **kwargs)
 
     @staticmethod
     def flag(key: str, **kwargs: dict[str, Any]) -> ShellArgumentDecorator:
         """Parse command line argument type `ShellArgumentFlag`."""
-        return ShellArgumentDecorator.parse_value("flags", ShellArgumentFlag, key, **kwargs)
+        return ShellArgumentDecorator._parse_value("flags", ShellArgumentFlag, key, **kwargs)
 
     @staticmethod
     def option(key: str, **kwargs: dict[str, Any]) -> ShellArgumentDecorator:
         """Parse command line argument type `ShellArgumentOption`."""
-        return ShellArgumentDecorator.parse_value("options", ShellArgumentOption, key, **kwargs)
+        return ShellArgumentDecorator._parse_value("options", ShellArgumentOption, key, **kwargs)
 
     @staticmethod
     def switch(key: str, **kwargs: dict[str, Any]) -> ShellArgumentDecorator:
         """Parse command line argument type `ShellArgumentSwitch`."""
-        return ShellArgumentDecorator.parse_value("chains", ShellArgumentSwitch, key, **kwargs)
+        return ShellArgumentDecorator._parse_value("chains", ShellArgumentSwitch, key, **kwargs)
 
     @staticmethod
     def _format_callback_kwargs_for(instance_container: ValuesView[ShellArgument]) -> dict[str, ShellArgumentType]:
