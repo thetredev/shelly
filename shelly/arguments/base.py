@@ -62,3 +62,8 @@ class ShellArgumentBase:
     def key_index(self) -> int:
         """Return the first key index. Throws a `StopIteration` exception if the key wasn't found in the command line."""
         return next(iter(self.key_indices))
+
+    @property
+    def value_index(self) -> int:
+        """Return the first value index. Throws a `StopIteration` exception if the respective key wasn't found in the command line."""
+        return self.key_index + 1

@@ -12,5 +12,4 @@ class ShellArgumentOption(ShellArgumentBase):
         #  Command line: -x 70
         #  Result: 70
 
-        arg_index = self.key_index + 1
-        self._value.data = self.value_type(command_line[arg_index])
+        self._value.data = self.value_type(command_line[self.value_index])
