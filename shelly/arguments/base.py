@@ -6,7 +6,7 @@ from shelly.arguments.values import ShellArgumentValue
 
 
 @dataclass(frozen=True, eq=True, slots=True)
-class ShellArgumentBase(object):
+class ShellArgumentBase:
     key: str
     key_indices: list[int]
 
