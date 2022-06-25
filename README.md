@@ -23,12 +23,12 @@ from shelly.decorators import shell
 def append_to_file_callback(
     file_name: shell.Option,
     file_property: shell.Switch
-):
+) -> None:
     with open(file_name.value, "a") as f:
         f.write(file_property.value)
 
 
-def main():
+def main() -> None:
     shell.parse()
 
 
