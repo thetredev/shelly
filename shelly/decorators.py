@@ -24,7 +24,7 @@ class ShellArgument(Protocol):
 
 class ShellArgumentDecorator:
     """Decorator used to provide a callback with parsed command line argument values."""
-    __slots__ = ("callback", "chains", "flags", "options", "switches")
+    __slots__ = ("_callback", "_chains", "_flags", "_options", "_switches")
 
     # List to reference instances of this class
     _instances: list[ShellArgumentDecorator] = list()
@@ -42,10 +42,10 @@ class ShellArgumentDecorator:
 
         # Command line argument type maps
         # { <argument key>: <argument instance> }
-        self.chains: dict[str, ShellArgumentChain] = dict()
-        self.flags: dict[str, ShellArgumentFlag] = dict()
-        self.options: dict[str, ShellArgumentOption] = dict()
-        self.switches: dict[str, ShellArgumentSwitch] = dict()
+        self._chains: dict[str, ShellArgumentChain] = dict()
+        self._flags: dict[str, ShellArgumentFlag] = dict()
+        self._options: dict[str, ShellArgumentOption] = dict()
+        self._switches: dict[str, ShellArgumentSwitch] = dict()
 
         # Append this instance to the instance list
         self._instances.append(self)
@@ -69,14 +69,14 @@ class ShellArgumentDecorator:
 
     def _parse_all_instances(self) -> None:
         """Parse all command line argument types."""
-        self._parse_instance(self.chains.values())
-        self._parse_instance(self.flags.values())
-        self._parse_instance(self.options.values())
-        self._parse_instance(self.switches.values())
+        self._parse_instance(self._chains.values())
+        self._parse_instance(self._flags.values())
+        self._parse_instance(self._options.values())
+        self._parse_instance(self._switches.values())
 
         # Render this instance useless and remove it from the instance list
         # if we couldn't find any command line argument relevant for this decorator.
-        if not self.flags and not self.options and not self.switches and not self.chains:
+        if not self._flags and not self._options and not self._switches and not self._chains:
             self._instances.remove(self)
 
     @staticmethod
@@ -125,22 +125,22 @@ class ShellArgumentDecorator:
     @staticmethod
     def chain(key: str, **kwargs: dict[str, Any]) -> ShellArgumentDecorator:
         """Parse command line argument type `ShellArgumentChain`."""
-        return ShellArgumentDecorator._parse_value("chains", ShellArgumentChain, key, **kwargs)
+        return ShellArgumentDecorator._parse_value("_chains", ShellArgumentChain, key, **kwargs)
 
     @staticmethod
     def flag(key: str, **kwargs: dict[str, Any]) -> ShellArgumentDecorator:
         """Parse command line argument type `ShellArgumentFlag`."""
-        return ShellArgumentDecorator._parse_value("flags", ShellArgumentFlag, key, **kwargs)
+        return ShellArgumentDecorator._parse_value("_flags", ShellArgumentFlag, key, **kwargs)
 
     @staticmethod
     def option(key: str, **kwargs: dict[str, Any]) -> ShellArgumentDecorator:
         """Parse command line argument type `ShellArgumentOption`."""
-        return ShellArgumentDecorator._parse_value("options", ShellArgumentOption, key, **kwargs)
+        return ShellArgumentDecorator._parse_value("_options", ShellArgumentOption, key, **kwargs)
 
     @staticmethod
     def switch(key: str, **kwargs: dict[str, Any]) -> ShellArgumentDecorator:
         """Parse command line argument type `ShellArgumentSwitch`."""
-        return ShellArgumentDecorator._parse_value("chains", ShellArgumentSwitch, key, **kwargs)
+        return ShellArgumentDecorator._parse_value("_chains", ShellArgumentSwitch, key, **kwargs)
 
     @staticmethod
     def _format_callback_kwargs_for(instance_container: ValuesView[ShellArgument]) -> dict[str, ShellArgumentType]:
@@ -153,10 +153,10 @@ class ShellArgumentDecorator:
         """Parse the command line arguments and call the callback with the parsed values."""
         self._parse_all_instances()
 
-        kwargs = self._format_callback_kwargs_for(self.chains.values()) \
-            | self._format_callback_kwargs_for(self.flags.values()) \
-            | self._format_callback_kwargs_for(self.options.values()) \
-            | self._format_callback_kwargs_for(self.switches.values())
+        kwargs = self._format_callback_kwargs_for(self._chains.values()) \
+            | self._format_callback_kwargs_for(self._flags.values()) \
+            | self._format_callback_kwargs_for(self._options.values()) \
+            | self._format_callback_kwargs_for(self._switches.values())
 
         self._callback(**kwargs)
 
