@@ -22,12 +22,12 @@ class ShellArgument(Protocol):
         ...
 
 
-class ShellArgumentDecorator:
+class ShellDecorator:
     """Decorator used to provide a callback with parsed command line argument values."""
     __slots__ = ("_callback", "_chains", "_flags", "_options", "_switches")
 
     # List to reference instances of this class
-    _instances: list[ShellArgumentDecorator] = list()
+    _instances: list[ShellDecorator] = list()
 
     # Short type aliases
     Chain: Type[ShellArgumentChain] = ShellArgumentChain
@@ -96,7 +96,7 @@ class ShellArgumentDecorator:
         required = kwargs.get("required", False)
 
         try:
-            key_indices = ShellArgumentDecorator._find_key_indices(key)
+            key_indices = ShellDecorator._find_key_indices(key)
             parsed_instance = instance_type(key, list(key_indices), **kwargs)
         except ValueError:
             if required:
@@ -109,38 +109,38 @@ class ShellArgumentDecorator:
         return parsed_instance
 
     @staticmethod
-    def _last_instance() -> ShellArgumentDecorator:
+    def _last_instance() -> ShellDecorator:
         """Return the last instance of this decorator."""
-        return ShellArgumentDecorator._instances[-1]
+        return ShellDecorator._instances[-1]
 
     @staticmethod
-    def _parse_value(instance_container: str, instance_type: ShellArgumentType, key: str, **kwargs: dict[str, Any]) -> ShellArgumentDecorator:
+    def _parse_value(instance_container: str, instance_type: ShellArgumentType, key: str, **kwargs: dict[str, Any]) -> ShellDecorator:
         """Wrapper around _parse_value() with more focus on storing the parsed instance in the appropriate command line argument type map."""
-        parsed_instance = ShellArgumentDecorator._parse_value_internal(instance_type, key, **kwargs)
-        last_instance = ShellArgumentDecorator._last_instance()
+        parsed_instance = ShellDecorator._parse_value_internal(instance_type, key, **kwargs)
+        last_instance = ShellDecorator._last_instance()
 
         getattr(last_instance, instance_container)[key] = parsed_instance
         return last_instance
 
     @staticmethod
-    def chain(key: str, **kwargs: dict[str, Any]) -> ShellArgumentDecorator:
+    def chain(key: str, **kwargs: dict[str, Any]) -> ShellDecorator:
         """Parse command line argument type `ShellArgumentChain`."""
-        return ShellArgumentDecorator._parse_value("_chains", ShellArgumentChain, key, **kwargs)
+        return ShellDecorator._parse_value("_chains", ShellArgumentChain, key, **kwargs)
 
     @staticmethod
-    def flag(key: str, **kwargs: dict[str, Any]) -> ShellArgumentDecorator:
+    def flag(key: str, **kwargs: dict[str, Any]) -> ShellDecorator:
         """Parse command line argument type `ShellArgumentFlag`."""
-        return ShellArgumentDecorator._parse_value("_flags", ShellArgumentFlag, key, **kwargs)
+        return ShellDecorator._parse_value("_flags", ShellArgumentFlag, key, **kwargs)
 
     @staticmethod
-    def option(key: str, **kwargs: dict[str, Any]) -> ShellArgumentDecorator:
+    def option(key: str, **kwargs: dict[str, Any]) -> ShellDecorator:
         """Parse command line argument type `ShellArgumentOption`."""
-        return ShellArgumentDecorator._parse_value("_options", ShellArgumentOption, key, **kwargs)
+        return ShellDecorator._parse_value("_options", ShellArgumentOption, key, **kwargs)
 
     @staticmethod
-    def switch(key: str, **kwargs: dict[str, Any]) -> ShellArgumentDecorator:
+    def switch(key: str, **kwargs: dict[str, Any]) -> ShellDecorator:
         """Parse command line argument type `ShellArgumentSwitch`."""
-        return ShellArgumentDecorator._parse_value("_chains", ShellArgumentSwitch, key, **kwargs)
+        return ShellDecorator._parse_value("_chains", ShellArgumentSwitch, key, **kwargs)
 
     @staticmethod
     def _format_callback_kwargs_for(instance_container: ValuesView[ShellArgument]) -> dict[str, ShellArgumentType]:
@@ -163,9 +163,9 @@ class ShellArgumentDecorator:
     @staticmethod
     def parse() -> None:
         """Call _fire() on all instances of the instance list."""
-        for instance in ShellArgumentDecorator._instances:
+        for instance in ShellDecorator._instances:
             instance._fire()
 
 
 # Short type alias
-shell = ShellArgumentDecorator
+shell = ShellDecorator
