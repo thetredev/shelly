@@ -3,7 +3,7 @@ from shelly.arguments.cli import command_line
 
 
 class ShellArgumentFlag(ShellArgumentBase):
-    def _parse(self):
+    def _parse(self) -> None:
         args = [arg for arg in command_line if self._is_flag(arg)]
 
         self._value.data = sum([
@@ -19,5 +19,5 @@ class ShellArgumentFlag(ShellArgumentBase):
         return self.key == arg or arg.startswith(self.key)
 
     @property
-    def identifier(self):
+    def identifier(self) -> str:
         return self.key[1]
