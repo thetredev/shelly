@@ -3,7 +3,19 @@ from shelly.arguments.base import ShellArgumentBase
 
 
 class ShellArgumentFlag(ShellArgumentBase):
+    """Subclass used to implement parsing argument flags."""
+
     def _parse(self) -> None:
+        """Parsing implementation."""
+        # Examples:
+        #  Key: -v
+        #  Command line: -v
+        #  Result: 1
+        #
+        #  Key: -v
+        #  Command line: -v -v
+        #  Result: 2
+
         args = [arg for arg in command_line if self._is_flag(arg)]
 
         self._value.data = sum([
@@ -13,6 +25,7 @@ class ShellArgumentFlag(ShellArgumentBase):
         ])
 
     def _is_flag(self, arg: str):
+        """Return whether the given argument indicates a flag or not."""
         if arg.startswith("--"):
             return False
 
@@ -20,4 +33,5 @@ class ShellArgumentFlag(ShellArgumentBase):
 
     @property
     def __identifier(self) -> str:
+        """Return the flag identifier. This will always be the first character of the `key` string."""
         return self.key[1]
