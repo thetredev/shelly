@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections.abc import ValuesView
 from typing import Any, Callable, Protocol, Type
 
-from shelly.arguments.cli import command_line
+from shelly.cli import command_line
 from shelly.arguments.errors import ShellArgumentError
 
 from shelly.arguments.chains import ShellArgumentChain

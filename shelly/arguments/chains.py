@@ -1,7 +1,7 @@
 import contextlib
 
+from shelly.cli import command_line
 from shelly.arguments.base import ShellArgumentBase
-from shelly.arguments.cli import command_line
 
 
 class ShellArgumentChain(ShellArgumentBase):
