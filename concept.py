@@ -1,4 +1,4 @@
-from shelly.arguments import ShellArgument
+from shelly.arguments.decorators import ShellArgumentDecorator
 
 from shelly.arguments.chains import ShellArgumentChain
 from shelly.arguments.flags import ShellArgumentFlag
@@ -16,12 +16,12 @@ class DoubleInt(int):
 
 # Not the most pythonic way to decorate a function, but it's the closest I could get to a fluent API
 # Any suggestions are very welcome!
-@ShellArgument()
-@ShellArgument.option("-f", name="file_name", value_type=str, description="Example file name", required=True)
-@ShellArgument.option("-t", name="double_int", value_type=DoubleInt, description="Double the integer input", required=True)
-@ShellArgument.switch("--hash", name="hash_value", value_type=str, description="Example hash value", required=False)
-@ShellArgument.flag("-v", name="verbosity_level", description="Verbosity level", required=False)
-@ShellArgument.chain("-z", name="chain_example", value_type=int, description="Chain example", required=True)
+@ShellArgumentDecorator()
+@ShellArgumentDecorator.option("-f", name="file_name", value_type=str, description="Example file name", required=True)
+@ShellArgumentDecorator.option("-t", name="double_int", value_type=DoubleInt, description="Double the integer input", required=True)
+@ShellArgumentDecorator.switch("--hash", name="hash_value", value_type=str, description="Example hash value", required=False)
+@ShellArgumentDecorator.flag("-v", name="verbosity_level", description="Verbosity level", required=False)
+@ShellArgumentDecorator.chain("-z", name="chain_example", value_type=int, description="Chain example", required=True)
 def example(
     file_name: ShellArgumentOption,
     double_int: ShellArgumentOption,
@@ -37,7 +37,7 @@ def example(
 
 
 # This has to be called from the program itself... possible to remove?
-ShellArgument.fire_all()
+ShellArgumentDecorator.fire_all()
 
 
 # Execute as follows:
