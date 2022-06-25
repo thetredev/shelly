@@ -47,7 +47,7 @@ class ShellArgument(object):
         key_indices = [i for i, arg in enumerate(command_line) if key in arg]
 
         if not key_indices:
-            raise ValueError()
+            raise ValueError(f"Key {key} not found in command line arguments!")
 
         yield from key_indices
 
