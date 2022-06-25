@@ -30,9 +30,14 @@ def example(
     print(chain_example.description, chain_example.value)
 
 
-# This has to be called from the program itself... possible to remove?
-shell.fire_all()
+def main():
+    # This has to be called from the program itself... possible to remove?
+    shell.fire_all()
 
 
-# Execute as follows:
+if __name__ == "__main__":
+    main()
+
+
+# Example execution of this file:
 # python concept.py -f "test.txt" -t 3 -v 5 -z 1 -z 3 -z 6 --hash=35t1251
