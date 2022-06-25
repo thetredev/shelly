@@ -38,7 +38,7 @@ class ShellArgumentDecorator:
     def __init__(self) -> None:
         """Constructor: Initialize instance members."""
         # The callback to call after command line arguments have been parsed
-        self.callback = None
+        self._callback = None
 
         # Command line argument type maps
         # { <argument key>: <argument instance> }
@@ -53,8 +53,8 @@ class ShellArgumentDecorator:
     def __call__(self, callback: Callable[..., None]) -> None:
         """Called when the Python interpreter has scanned a function decorated with this class."""
         # Store the callback for later use if we haven't already
-        if callback is not None and self.callback is None:
-            self.callback = callback
+        if callback is not None and self._callback is None:
+            self._callback = callback
 
         # The interpreter scanning stage is most probably not the only time this method gets called,
         # but AFAIK it's the only chance we get to store the callback, which is why we need the if statement above.
@@ -158,7 +158,7 @@ class ShellArgumentDecorator:
             | self._format_callback_kwargs_for(self.options.values()) \
             | self._format_callback_kwargs_for(self.switches.values())
 
-        self.callback(**kwargs)
+        self._callback(**kwargs)
 
     @staticmethod
     def parse() -> None:
