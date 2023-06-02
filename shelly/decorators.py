@@ -126,8 +126,8 @@ class ShellDecorator:
             if required:
                 raise ShellArgumentError(f"Could not parse required command line option '{key}'")
 
-            # Store the parsed instance with 0 key indices and value `None`
-            # if parsing wasn't successful and the argument is optional
+            # Argument is optional and parsing wasn't successful,
+            # so store 0 key indices and value `None`
             parsed_instance = instance_type(key, [], **kwargs)
 
         return parsed_instance
