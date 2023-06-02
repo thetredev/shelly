@@ -195,12 +195,13 @@ class ShellDecorator:
         # Get the decorator plugin name
         instance_name = plugin.SHELLY_PLUGIN_NAME
 
-        # Throw an error if the instance name starts with an underscore (_)
-        if instance_name.startswith("_"):
-            raise ShellDecoratorPluginError("Plugin instance name must not start with an underscore (_)!")
+        # Throw an error if the instance name starts with more than one underscore (_)
+        if instance_name.count("_") > 1:
+            raise ShellDecoratorPluginError("Plugin instance name cannot start with more than one underscore (_)!")
 
-        # Prepend the decorator plugin instance name with an underscore (_)
-        instance_name = f"_{instance_name}"
+        # Prepend the decorator plugin instance name with an underscore (_) if it doesn't start with one
+        if not instance_name.startswith("_"):
+            instance_name = f"_{instance_name}"
 
         # Add the instance name to the class's __slots__ attribute
         setattr(ShellDecorator, "__slots__", (*ShellDecorator.__slots__, instance_name))
