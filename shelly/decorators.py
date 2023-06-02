@@ -139,7 +139,7 @@ class ShellDecorator:
 
     @staticmethod
     def _parse_value(instance_container: str, instance_type: ShellArgumentType, key: str, **kwargs: dict[str, Any]) -> ShellDecorator:
-        """Wrapper around _parse_value() with more focus on storing the parsed instance in the appropriate command line argument type map."""
+        """Wrapper around _parse_value_internal() with more focus on storing the parsed instance in the appropriate command line argument type map."""
         parsed_instance = ShellDecorator._parse_value_internal(instance_type, key, **kwargs)
         last_instance = ShellDecorator._last_instance()
 
